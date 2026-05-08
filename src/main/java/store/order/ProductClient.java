@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(
     name = "product",
-    url = "${PRODUCT_API_URL:http://product:8080}"
+    url = "${PRODUCT_API_URL:http://product:8080}",
+    configuration = ProductFeignConfig.class
 )
 public interface ProductClient {
 

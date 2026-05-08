@@ -113,8 +113,10 @@ public class OrderService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product does not exist");
             }
             return response.getBody();
-        } catch (FeignException.NotFound e) {
+        } catch (ProductNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product does not exist");
+        } catch (ProductApiUnavailableException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Product service unavailable");
         }
     }
 
@@ -133,6 +135,9 @@ public class OrderService {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Unsupported currency");
         } catch (FeignException.NotFound e) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Unsupported currency");
+        } catch (FeignException e) {
+            // Fallback to storage currency (USD) when exchange service is unavailable.
+            return BigDecimal.ONE;
         }
     }
 
