@@ -126,7 +126,7 @@ public class OrderService {
             return BigDecimal.ONE;
         }
         try {
-            ResponseEntity<ExchangeOut> response = exchangeClient.findByCurrency(normalized);
+            ResponseEntity<ExchangeOut> response = exchangeClient.findByCurrency(DEFAULT_CURRENCY, normalized);
             if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
                 throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Unsupported currency");
             }
@@ -135,6 +135,10 @@ public class OrderService {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Unsupported currency");
         } catch (FeignException.NotFound e) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Unsupported currency");
+        } catch (ProductNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Unsupported currency");
+        } catch (ProductApiUnavailableException e) {
+            return BigDecimal.ONE;
         } catch (FeignException e) {
             // Fallback to storage currency (USD) when exchange service is unavailable.
             return BigDecimal.ONE;

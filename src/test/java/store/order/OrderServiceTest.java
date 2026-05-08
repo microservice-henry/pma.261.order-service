@@ -98,7 +98,7 @@ public class OrderServiceTest {
     @Test
     void shouldReturn422WhenCurrencyIsInvalid() {
         mockOrderWithItems();
-        when(exchangeClient.findByCurrency("BRL")).thenThrow(feignExceptionWithStatus(422));
+        when(exchangeClient.findByCurrency("USD", "BRL")).thenThrow(feignExceptionWithStatus(422));
 
         ResponseStatusException ex = assertThrows(
             ResponseStatusException.class,
@@ -112,7 +112,7 @@ public class OrderServiceTest {
     @Test
     void shouldKeepUsdValuesWhenExchangeServiceIsUnavailable() {
         mockOrderWithItems();
-        when(exchangeClient.findByCurrency("BRL")).thenThrow(feignExceptionWithStatus(503));
+        when(exchangeClient.findByCurrency("USD", "BRL")).thenThrow(feignExceptionWithStatus(503));
 
         Order order = orderService.findById("account-1", "order-1", "BRL");
 
