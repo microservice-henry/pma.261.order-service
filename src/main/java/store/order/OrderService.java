@@ -35,7 +35,7 @@ public class OrderService {
         validateOrder(in);
 
         List<OrderItem> items = in.items().stream()
-            .map(this::buildItem)
+            .map(item -> buildItem(idAccount, item))
             .toList();
 
         BigDecimal total = items.stream()
@@ -97,18 +97,18 @@ public class OrderService {
             : currency.trim().toUpperCase();
     }
 
-    private OrderItem buildItem(OrderItemIn in) {
+    private OrderItem buildItem(String idAccount, OrderItemIn in) {
         validateItem(in);
-        ProductOut product = findProduct(in.idProduct());
+        ProductOut product = findProduct(idAccount, in.idProduct());
         BigDecimal total = product.price()
             .multiply(BigDecimal.valueOf(in.quantity()))
             .setScale(2, RoundingMode.HALF_UP);
         return OrderParser.to(in, total);
     }
 
-    private ProductOut findProduct(String idProduct) {
+    private ProductOut findProduct(String idAccount, String idProduct) {
         try {
-            ResponseEntity<ProductOut> response = productClient.findById(idProduct);
+            ResponseEntity<ProductOut> response = productClient.findById(idAccount, idProduct);
             if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product does not exist");
             }
