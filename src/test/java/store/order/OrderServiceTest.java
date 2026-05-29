@@ -44,7 +44,7 @@ public class OrderServiceTest {
 
     @Test
     void shouldReturn400WhenProductDoesNotExist() {
-        when(productClient.findById("product-1")).thenThrow(new ProductNotFoundException());
+        when(productClient.findById("account-1", "product-1")).thenThrow(new ProductNotFoundException());
 
         ResponseStatusException ex = assertThrows(
             ResponseStatusException.class,
@@ -60,7 +60,7 @@ public class OrderServiceTest {
 
     @Test
     void shouldReturn502WhenProductServiceIsUnavailable() {
-        when(productClient.findById("product-1")).thenThrow(new ProductApiUnavailableException());
+        when(productClient.findById("account-1", "product-1")).thenThrow(new ProductApiUnavailableException());
 
         ResponseStatusException ex = assertThrows(
             ResponseStatusException.class,
